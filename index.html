@@ -312,6 +312,7 @@ const photos = {
   cheesecake_mango: "img/cheesecake_mango.jpg",
   brownie: "img/brownies.jpg",
   tiramisu: "img/tiramisu.jpg",
+  brioche_molde: "img/brioche_molde.jpeg",
 };
 
 const data = [
@@ -326,11 +327,8 @@ const data = [
       { name: "Cheesecake de Maracuyá", desc: "Suave cheesecake con el toque tropical y vibrante del maracuyá.", familiar: 1190, mediano: 630, photo: "maracuya" },
       { name: "Cookies and Cream Cheesecake", desc: "Con trozos de galleta de chocolate, crema y crumble de galleta como top y en la base.", familiar: 1290, mediano: 690, photo: "cookies_cream" },
       { name: "Cheesecake deDulce de Leche", desc: "Cremoso e intenso, fusionado con el dulzor profundo del dulce de leche.", familiar: 1200, mediano: 650, photo: "dulce_leche" },
-      { name: "Lotus Biscoff Cheesecake", familiar: 1250, mediano: 650, agotado: true },
       { name: "Tarta Vasca", desc: "Nuestra interpretación del clásico vasco: interior cremoso, superficie caramelizada y el equilibrio perfecto entre intensidad y suavidad.", familiar: 1200, mediano: 630, photo: "tarta_vasca" },
-      { name: "Apple Pie Cheesecake", desc: "Con manzanas caramelizadas integradas en la torta, crema y una delicada capa de caramelo salado.", familiar: 1270, mediano: 670, temporada: true, photo: "apple_pie" },
-      { name: "Pumpkin Swirl Cheesecake", desc: "Con calabaza especiada en remolino, dulce y aromático, con un final cálido y acogedor.", familiar: 1350, mediano: 680, temporada: true, photo: "pumpkin" },
-      { name: "Cheesecake de Mango", familiar: 1450, mediano: 750, agotado: true/*, photo: "cheesecake_mango" */},
+
     ]
   },
   {
@@ -352,8 +350,7 @@ const data = [
       { name: "Tres leches clásico", familiar: 1100, mediano: 600 },
       { name: "Pastel de Zanahoria Tres Leches", desc: "Bizcocho de zanahoria especiado, bañado en mezcla tres leches y cubierto con crema suave estilo cream cheese.", familiar: 1850, mediano: 950, photo: "zanahoria_tresleches" },
       { name: "Cuatro leches", familiar: 1400, mediano: 800 },
-      { name: "Tres leches de mango", familiar: 1100, mediano: 700, agotado: true },
-    ]
+        ]
   },
   {
     id: "tartas",
@@ -385,12 +382,25 @@ const data = [
   },
   {
     id: "panaderia",
-    name: "Panadería",
-    desc: "Pan fresco, único tamaño.",
+    name: "Panadería | Brioche",
+    desc: "Pan suave y mantequilloso, elaborado con masa madre.",
     items: [
-      { name: "Pan de mesa", note: "Bolsa de 9 piezas", unico: 240 },
-      { name: "Pan de hamburguesa", note: "Bolsa de 6 piezas", unico: 255 },
-      { name: "Pan molde", note: "1 pieza de 530 g", unico: 250 },
+      { name: "Pan de mesa", desc: "Brioche suave y mantequilloso, en porciones individuales. Perfecto para acompañar la mesa, desayunos o cenas.", note: "Bolsa de 9 piezas", unico: 240 },
+      { name: "Pan de hamburguesa", desc: "Brioche suave, ligeramente dulce y con la miga perfecta para hamburguesas y sandwiches.", note: "Bolsa de 6 piezas", unico: 255 },
+      { name: "Brioche de molde", desc: "Pan de masa madre, suave, mantequilloso y ligeramente dulce. Ideal para tostadas, french toast o simplemente mantequilla.", note: "1 pieza de 530 g", unico: 250, photo: "brioche_molde" },
+    ]
+  },
+  {
+    id: "temporada",
+    name: "De Temporada",
+    desc: "Postres que solo están disponibles por temporadas especiales.",
+    items: [
+      { name: "Pumpkin Swirl Cheesecake", desc: "Con calabaza especiada en remolino, dulce y aromático, con un final cálido y acogedor.", familiar: 1350, mediano: 680, temporada: true, photo: "pumpkin" },
+      { name: "Apple Pie Cheesecake", desc: "Con manzanas caramelizadas integradas en la torta, crema y una delicada capa de caramelo salado.", familiar: 1270, mediano: 670, temporada: true, photo: "apple_pie" },
+      { name: "Cheesecake de Mango", familiar: 1450, mediano: 750, agotado: true/*, photo: "cheesecake_mango" */},
+      { name: "Tres leches de mango", familiar: 1100, mediano: 700, agotado: true },
+      { name: "Lotus Biscoff Cheesecake", familiar: 1250, mediano: 650, agotado: true },
+
     ]
   },
 ];
