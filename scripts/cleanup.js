@@ -1,9 +1,3 @@
-// Borra automáticamente los comprobantes de pago de Kremó que ya superaron
-// el tiempo de retención definido en DAYS_TO_KEEP.
-// Corre desde GitHub Actions (ver .github/workflows/cleanup-receipts.yml),
-// nunca desde el navegador — necesita el API Secret de Cloudinary, que no
-// puede exponerse en el sitio web.
-
 const cloudinary = require('cloudinary').v2;
 
 cloudinary.config({
@@ -12,29 +6,30 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-// Carpeta donde caen los comprobantes subidos desde el checkout.
-// Tiene que coincidir con la carpeta configurada en tu upload preset
-// "kremocomprobante" (ver instrucciones más abajo).
 const FOLDER = 'kremo-comprobantes';
-
-// Cuántos días se guarda un comprobante antes de borrarse.
-// Cambiá este número si querés más o menos tiempo de retención.
-const DAYS_TO_KEEP = 0;
+const DAYS_TO_KEEP = 0; // Se mantiene en 0 para la prueba
 
 async function cleanup() {
-  const cutoff = new Date();
-  cutoff.setDate(cutoff.getDate() - DAYS_TO_KEEP);
+  console.log(`Iniciando búsqueda en Cloudinary...`);
+  console.log(`Buscando con expresión: folder:${FOLDER}/* OR folder:${FOLDER}`);
 
-  let nextCursor = undefined;
-  let deleted = 0;
+  // Buscamos tanto la carpeta exactas como su contenido
+  const result = await cloudinary.search
+    .expression(`folder:${FOLDER}/* OR folder:${FOLDER}`)
+    .sort_by('created_at', 'asc')
+    .max_results(100)
+    .execute();
 
-  do {
-    const result = await cloudinary.search
-      .expression(`folder:${FOLDER}`)
-      .sort_by('created_at', 'asc')
-      .max_results(100)
-      .next_cursor(nextCursor)
-      .execute();
+  console.log(`Total de archivos encontrados en la carpeta: ${result.total_count}`);
+
+  if (result.resources.length > 0) {
+    console.log('Archivos hallados:');
+    result.resources.forEach(r => {
+      console.log(` - ID: ${r.public_id} | Creado: ${r.created_at}`);
+    });
+
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - DAYS_TO_KEEP);
 
     const oldAssets = result.resources.filter(
       (r) => new Date(r.created_at) < cutoff
@@ -43,14 +38,14 @@ async function cleanup() {
     if (oldAssets.length > 0) {
       const publicIds = oldAssets.map((r) => r.public_id);
       await cloudinary.api.delete_resources(publicIds);
-      deleted += publicIds.length;
-      console.log(`Borrados ${publicIds.length} comprobantes viejos.`);
+      console.log(`✅ Borrados ${publicIds.length} comprobantes.`);
+    } else {
+      console.log('⚠️ Se encontraron archivos, pero ninguno cumple el criterio de fecha.');
     }
-
-    nextCursor = result.next_cursor;
-  } while (nextCursor);
-
-  console.log(`Listo. Total de comprobantes borrados: ${deleted}`);
+  } else {
+    console.log('❌ No se encontró NINGÚN archivo dentro de esa carpeta.');
+    console.log('Verifica en Cloudinary (Assets) la ruta exacta donde están guardadas las imágenes.');
+  }
 }
 
 cleanup().catch((err) => {
