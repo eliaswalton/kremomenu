@@ -780,7 +780,7 @@
 
       <div class="checkout-total"><span>Total con envío</span><span id="checkoutTotal">L 0</span></div>
 
-      <button type="button" class="cart-send-btn" onclick="submitCheckout()">Confirmar y enviar por WhatsApp</button>
+      <button type="button" class="cart-send-btn" id="checkoutSubmitBtn" onclick="submitCheckout()">Confirmar y enviar por WhatsApp</button>
     </form>
   </div>
 </div>
@@ -907,6 +907,41 @@ const data = [
     ]
   },
 ];
+
+/* ---------- Cloudinary (subida del comprobante de pago) ----------
+   1. Creá una cuenta gratis en https://cloudinary.com
+   2. En el Dashboard copiá tu "Cloud name" y pegalo abajo en CLOUDINARY_CLOUD_NAME.
+   3. Andá a Settings (⚙️) → Upload → "Upload presets" → Add upload preset.
+      - Signing Mode: ponelo en "Unsigned" (así el navegador puede subir sin exponer
+        ninguna clave secreta).
+      - Guardalo y copiá el nombre del preset en CLOUDINARY_UPLOAD_PRESET abajo.
+   Si dejás estos dos valores sin editar, el sitio sigue funcionando: cae
+   automáticamente al respaldo de copiar la imagen al portapapeles.
+------------------------------------------------------------------- */
+const CLOUDINARY_CLOUD_NAME = 'TU_CLOUD_NAME';
+const CLOUDINARY_UPLOAD_PRESET = 'TU_UPLOAD_PRESET';
+
+async function uploadReceiptToCloudinary(file){
+  if(!file) return null;
+  if(!CLOUDINARY_CLOUD_NAME || CLOUDINARY_CLOUD_NAME === 'TU_CLOUD_NAME') return null;
+  if(!CLOUDINARY_UPLOAD_PRESET || CLOUDINARY_UPLOAD_PRESET === 'TU_UPLOAD_PRESET') return null;
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('upload_preset', CLOUDINARY_UPLOAD_PRESET);
+
+  try{
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+      method: 'POST',
+      body: formData
+    });
+    if(!res.ok) return null;
+    const data = await res.json();
+    return data.secure_url || null;
+  } catch(err){
+    return null;
+  }
+}
 
 const nav = document.getElementById('catNav');
 const main = document.getElementById('main');
@@ -1261,6 +1296,27 @@ async function submitCheckout(){
     return;
   }
 
+  // Reservamos la pestaña ANTES de esperar la subida, para que el navegador
+  // no la bloquee como popup cuando cambiemos su destino más abajo.
+  const waWindow = window.open('', '_blank');
+
+  const receiptInput = document.getElementById('ckReceipt');
+  const receiptFile = receiptInput.files && receiptInput.files[0];
+  const submitBtn = document.getElementById('checkoutSubmitBtn');
+  const originalBtnText = submitBtn.textContent;
+
+  let receiptUrl = null;
+  let uploadAttempted = false;
+
+  if(receiptFile){
+    uploadAttempted = true;
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Subiendo comprobante...';
+    receiptUrl = await uploadReceiptToCloudinary(receiptFile);
+    submitBtn.disabled = false;
+    submitBtn.textContent = originalBtnText;
+  }
+
   const entries = Object.entries(cart);
   const lines = entries.map(([itemId, { size, qty, topping }]) => {
     const it = itemsIndex[itemId];
@@ -1275,6 +1331,9 @@ async function submitCheckout(){
   const total = cartTotal() + fee;
   const deliveryText = delivery === 'delivery' ? 'Delivery (+L 130)' : 'Pickup';
   const addressLine = delivery === 'delivery' ? `Dirección: ${address}\n` : '';
+  const receiptLine = receiptUrl
+    ? `\n\nComprobante de pago: ${receiptUrl}`
+    : (uploadAttempted ? `\n\nAdjunto el comprobante de pago en este chat.` : '');
 
   const msg = `Hola Kremó, quiero confirmar este pedido:\n\n`
     + `${lines.join('\n')}\n\n`
@@ -1284,22 +1343,24 @@ async function submitCheckout(){
     + `Horario: ${time}\n`
     + `Nombre de quien recibe: ${name}\n`
     + `Celular: +504 ${phoneRaw}\n\n`
-    + `Total: ${money(total)}\n\n`
-    + `Adjunto el comprobante de pago en este chat.`;
+    + `Total: ${money(total)}`
+    + `${receiptLine}`;
 
-  window.open(`https://wa.me/50492664235?text=${encodeURIComponent(msg)}`, '_blank');
+  const waLink = `https://wa.me/50492664235?text=${encodeURIComponent(msg)}`;
+  if(waWindow){
+    waWindow.location.href = waLink;
+  } else {
+    window.open(waLink, '_blank');
+  }
 
-  const receiptInput = document.getElementById('ckReceipt');
-  const receiptFile = receiptInput.files && receiptInput.files[0];
-
-  if(receiptFile){
+  if(uploadAttempted && !receiptUrl){
     const copied = await copyReceiptToClipboard(receiptFile);
     if(copied){
-      alert('¡Listo! Copiamos la imagen del comprobante a tu portapapeles. En el chat de WhatsApp que se abrió, mantené presionado el campo de texto y elegí "Pegar" (o Ctrl+V en computadora) para adjuntarla.');
+      alert('No pudimos subir la imagen automáticamente, pero la copiamos a tu portapapeles: pegala (Ctrl+V, o mantené presionado el campo de texto y elegí "Pegar") en el chat que se abrió.');
     } else {
-      alert('Ahora adjuntá la captura del comprobante de pago directamente en el chat de WhatsApp que se acaba de abrir (tu navegador no permite copiarla automáticamente).');
+      alert('No pudimos subir la imagen automáticamente. Adjuntala manualmente en el chat de WhatsApp que se acaba de abrir.');
     }
-  } else {
+  } else if(!uploadAttempted){
     alert('¡Listo! No olvides enviar la captura del comprobante de pago en el chat de WhatsApp.');
   }
 
