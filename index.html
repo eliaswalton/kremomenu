@@ -218,6 +218,30 @@
     transition: all 0.2s ease;
   }
   .size-btn.active{ background: var(--wine-deep); color: var(--cream); }
+  .topping-row{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+  }
+  .topping-select{
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--card-border);
+    border-radius: 999px;
+    color: var(--cream);
+    font-family:'Oswald', sans-serif;
+    font-size: 0.72rem;
+    padding: 0.3rem 0.65rem;
+    cursor: pointer;
+  }
+  .topping-select:focus{ outline: none; border-color: var(--gold); }
+  .topping-note{
+    font-size: 0.66rem;
+    color: var(--olive-deep);
+    text-align: right;
+    max-width: 170px;
+    line-height: 1.3;
+  }
   .qty-stepper{
     display: flex;
     align-items: center;
@@ -388,6 +412,154 @@
   .cart-send-btn:hover{ background: var(--wine); }
   .cart-send-btn:disabled{ opacity: 0.4; cursor: not-allowed; }
 
+  /* ---------- Checkout ---------- */
+  .checkout-overlay{
+    position: fixed;
+    inset: 0;
+    background: rgba(20,17,16,0.9);
+    backdrop-filter: blur(4px);
+    z-index: 95;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.4rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .checkout-overlay.open{ opacity: 1; pointer-events: auto; }
+  .checkout-card{
+    width: min(480px, 100%);
+    max-height: 92vh;
+    overflow-y: auto;
+    background: var(--bg);
+    border: 1px solid var(--card-border);
+    border-radius: 16px;
+    padding: 1.8rem 1.5rem;
+    transform: translateY(16px);
+    transition: transform 0.3s cubic-bezier(.2,.8,.2,1);
+  }
+  .checkout-overlay.open .checkout-card{ transform: translateY(0); }
+  .checkout-back{
+    background: transparent;
+    border: none;
+    color: var(--olive);
+    font-family:'Oswald', sans-serif;
+    font-size: 0.8rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    margin-bottom: 1rem;
+    padding: 0;
+  }
+  .checkout-back:hover{ color: var(--cream); }
+  .checkout-title{ font-style: italic; font-size: 1.5rem; color: var(--cream); margin: 0 0 1.2rem; }
+  .checkout-summary{
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    border-bottom: 1px solid var(--card-border);
+    padding-bottom: 1rem;
+    margin-bottom: 1.3rem;
+  }
+  .form-group{ margin-bottom: 1.15rem; }
+  .form-group label{
+    display: block;
+    font-family:'Oswald', sans-serif;
+    font-size: 0.78rem;
+    color: var(--olive);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.02em;
+  }
+  .form-group input[type=text],
+  .form-group input[type=tel],
+  .form-group input[type=date],
+  .form-group select,
+  .form-group input[type=file]{
+    width: 100%;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 0.65rem 0.8rem;
+    color: var(--cream);
+    font-family:'Work Sans', sans-serif;
+    font-size: 0.92rem;
+  }
+  .form-group input:focus, .form-group select:focus{ outline: none; border-color: var(--gold); }
+  .phone-input-wrap{ display: flex; align-items: center; gap: 0.5rem; }
+  .phone-prefix{ color: var(--olive); font-family:'Oswald', sans-serif; font-size: 0.9rem; }
+  .radio-group{ display: flex; gap: 0.8rem; }
+  .radio-option{
+    flex: 1;
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 0.7rem;
+    cursor: pointer;
+    text-align: center;
+    font-family:'Oswald', sans-serif;
+    font-size: 0.82rem;
+    color: var(--olive);
+    transition: all 0.2s ease;
+  }
+  .radio-option.active{ border-color: var(--gold); color: var(--cream); background: rgba(219,188,106,0.08); }
+  .radio-option input{ display: none; }
+  .delivery-note{
+    margin-top: 0.6rem;
+    font-size: 0.82rem;
+    color: var(--olive);
+    background: rgba(138,70,70,0.12);
+    border: 1px solid rgba(138,70,70,0.3);
+    border-radius: 8px;
+    padding: 0.6rem 0.8rem;
+  }
+  .bank-box{
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 0.9rem;
+    font-size: 0.86rem;
+    color: var(--cream);
+    line-height: 1.6;
+  }
+  .bank-box strong{ color: var(--gold); }
+  .bank-account-row{
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .copy-btn{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: transparent;
+    border: 1px solid var(--card-border);
+    color: var(--olive);
+    border-radius: 999px;
+    padding: 0.15rem 0.6rem;
+    font-family:'Oswald', sans-serif;
+    font-size: 0.68rem;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .copy-btn:hover{ color: var(--cream); border-color: var(--gold); }
+  .copy-btn.copied{ color: var(--gold); border-color: var(--gold); }
+  .copy-btn svg{ width: 11px; height: 11px; }
+  .file-hint{ font-size: 0.76rem; color: var(--olive-deep); margin-top: 0.4rem; }
+  .field-error{ color: #d9a9a9; font-size: 0.76rem; margin-top: 0.35rem; display: none; }
+  .checkout-total{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family:'Bodoni Moda', serif;
+    color: var(--cream);
+    font-size: 1.1rem;
+    margin: 1.2rem 0;
+    padding-top: 1rem;
+    border-top: 1px solid var(--card-border);
+  }
+
   footer{
     max-width: 780px;
     margin: 0 auto;
@@ -522,7 +694,94 @@
     </div>
     <div id="cartItems" class="cart-items"><p class="cart-empty">Aún no has agregado nada.</p></div>
     <div class="cart-total"><span>Total</span><span id="cartTotal">L 0</span></div>
-    <button id="cartSendBtn" class="cart-send-btn" onclick="sendOrder()" disabled>Enviar pedido por WhatsApp</button>
+    <button id="cartSendBtn" class="cart-send-btn" onclick="openCheckout()" disabled>Continuar al checkout</button>
+  </div>
+</div>
+
+<div id="checkoutOverlay" class="checkout-overlay">
+  <div class="checkout-card">
+    <button class="checkout-back" onclick="closeCheckout()">← Volver al carrito</button>
+    <h3 class="checkout-title">Finalizar pedido</h3>
+
+    <div id="checkoutSummary" class="checkout-summary"></div>
+
+    <form id="checkoutForm" onsubmit="return false;">
+      <div class="form-group">
+        <label for="ckName">Nombre de quien recibe *</label>
+        <input type="text" id="ckName" placeholder="Nombre completo">
+      </div>
+
+      <div class="form-group">
+        <label for="ckPhone">Número de celular *</label>
+        <div class="phone-input-wrap">
+          <span class="phone-prefix">+504</span>
+          <input type="tel" id="ckPhone" placeholder="9999 9999" maxlength="9">
+        </div>
+        <div class="field-error" id="ckPhoneError">Ingresá un número válido de 8 dígitos.</div>
+      </div>
+
+      <div class="form-group">
+        <label>Entrega *</label>
+        <div class="radio-group">
+          <label class="radio-option active" id="optDelivery">
+            <input type="radio" name="ckDelivery" value="delivery" checked onchange="onDeliveryChange()"> Delivery
+          </label>
+          <label class="radio-option" id="optPickup">
+            <input type="radio" name="ckDelivery" value="pickup" onchange="onDeliveryChange()"> Pickup
+          </label>
+        </div>
+        <div class="delivery-note" id="deliveryNote">El delivery tiene un costo adicional de <strong>L 130</strong>.</div>
+        <div class="delivery-note" id="pickupNote" style="display:none;">Podés recoger tu pedido en <strong>[dirección de pickup — edítala en el código]</strong>.</div>
+      </div>
+
+      <div class="form-group" id="addressGroup">
+        <label for="ckAddress">Dirección de entrega *</label>
+        <input type="text" id="ckAddress" placeholder="Colonia, calle, casa/apto, puntos de referencia">
+        <div class="field-error" id="ckAddressError">Ingresá la dirección donde vamos a entregar el pedido.</div>
+      </div>
+
+      <div class="form-group">
+        <label for="ckDate">Fecha de entrega *</label>
+        <input type="date" id="ckDate">
+        <div class="field-error" id="ckDateError">Elegí una fecha desde mañana, de lunes a sábado (no domingo).</div>
+      </div>
+
+      <div class="form-group">
+        <label for="ckTime">Hora de entrega *</label>
+        <select id="ckTime">
+          <option value="">Elegí un horario</option>
+          <option value="9:00 am - 11:00 am">9:00 am – 11:00 am</option>
+          <option value="11:00 am - 1:00 pm">11:00 am – 1:00 pm</option>
+          <option value="1:00 pm - 3:00 pm">1:00 pm – 3:00 pm</option>
+          <option value="3:00 pm - 5:00 pm">3:00 pm – 5:00 pm</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Datos para depósito</label>
+        <div class="bank-box">
+          Banco: <strong>[Nombre del banco]</strong><br>
+          <div class="bank-account-row">
+            Cuenta [ahorro/monetaria]: <strong id="bankAccountNumber">[Número de cuenta]</strong>
+            <button type="button" class="copy-btn" id="copyAccountBtn" onclick="copyAccountNumber()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              <span id="copyAccountLabel">Copiar</span>
+            </button>
+          </div>
+          A nombre de: <strong>[Nombre del titular]</strong>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="ckReceipt">Comprobante de pago</label>
+        <input type="file" id="ckReceipt" accept="image/*">
+        <div class="file-hint">En celulares compatibles, al confirmar se abrirá el menú para compartir esta imagen — elegí WhatsApp y el chat de Kremó para adjuntarla. Si tu navegador no lo soporta, te lo recordamos para que la adjuntes manualmente en el chat.</div>
+      </div>
+
+      <div class="checkout-total"><span>Total con envío</span><span id="checkoutTotal">L 0</span></div>
+
+      <button type="button" class="cart-send-btn" onclick="submitCheckout()">Confirmar y enviar por WhatsApp</button>
+    </form>
   </div>
 </div>
 
@@ -585,7 +844,7 @@ const data = [
       { name: "Cheesecake de Maracuyá", desc: "Suave cheesecake con el toque tropical y vibrante del maracuyá.", familiar: 1190, mediano: 630, photo: "maracuya" },
       { name: "Cookies and Cream Cheesecake", desc: "Con trozos de galleta de chocolate, crema y crumble de galleta como top y en la base.", familiar: 1290, mediano: 690, photo: "cookies_cream" },
       { name: "Cheesecake de Dulce de Leche", desc: "Cremoso e intenso, fusionado con el dulzor profundo del dulce de leche.", familiar: 1200, mediano: 650, photo: "dulce_leche" },
-      { name: "Tarta Vasca", desc: "Nuestra interpretación del clásico vasco: interior cremoso, superficie caramelizada y el equilibrio perfecto entre intensidad y suavidad.", familiar: 1200, mediano: 630, photo: "tarta_vasca" },
+      { name: "Tarta Vasca", desc: "Nuestra interpretación del clásico vasco: interior cremoso, superficie caramelizada y el equilibrio perfecto entre intensidad y suavidad.", familiar: 1200, mediano: 630, photo: "tarta_vasca", toppings: { options: ["Blueberry", "Fresa"], extraMediano: 85, extraFamiliar: 125 } },
       { name: "Lotus Biscoff Cheesecake", familiar: 1250, mediano: 650, agotado: true },
     ]
   },
@@ -725,6 +984,13 @@ data.forEach((cat, i) => {
                 <button type="button" class="size-btn active" data-size="mediano" onclick="setSize('${itemId}','mediano')">${item.medianoLabel || 'Mediano'}</button>
                 <button type="button" class="size-btn" data-size="familiar" onclick="setSize('${itemId}','familiar')">${item.familiarLabel || 'Familiar'}</button>
               </div>` : ''}
+              ${item.toppings ? `<div class="topping-row">
+                <select class="topping-select" id="topping-${itemId}" onchange="setTopping('${itemId}', this.value)">
+                  <option value="">Sin topping</option>
+                  ${item.toppings.options.map(t => `<option value="${t}">${t}</option>`).join('')}
+                </select>
+                <div class="topping-note">Topping opcional: +L ${item.toppings.extraMediano} (mediano) · +L ${item.toppings.extraFamiliar} (familiar)</div>
+              </div>` : ''}
               <div class="qty-stepper">
                 <button type="button" onclick="changeQty('${itemId}',-1)" aria-label="Quitar">−</button>
                 <span id="qty-${itemId}">0</span>
@@ -748,10 +1014,13 @@ function showSection(id){
 }
 
 /* ---------- Cart ---------- */
-function unitPrice(itemId, size){
+function unitPrice(itemId, size, topping){
   const it = itemsIndex[itemId];
-  if(it.unico !== undefined) return it.unico;
-  return size === 'familiar' ? it.familiar : it.mediano;
+  let price = it.unico !== undefined ? it.unico : (size === 'familiar' ? it.familiar : it.mediano);
+  if(it.toppings && topping){
+    price += size === 'familiar' ? it.toppings.extraFamiliar : it.toppings.extraMediano;
+  }
+  return price;
 }
 
 function sizeLabel(itemId, size){
@@ -760,16 +1029,30 @@ function sizeLabel(itemId, size){
   return size === 'familiar' ? (it.familiarLabel || 'Familiar/Grande') : (it.medianoLabel || 'Mediano');
 }
 
+function toppingLabel(topping){
+  return topping ? `Topping: ${topping}` : '';
+}
+
 function setSize(itemId, size){
-  if(!cart[itemId]) cart[itemId] = { size, qty: 0 };
+  if(!cart[itemId]) cart[itemId] = { size, qty: 0, topping: '' };
   else cart[itemId].size = size;
+  renderCartUI();
+}
+
+function setTopping(itemId, topping){
+  if(!cart[itemId]){
+    const defaultSize = itemsIndex[itemId].unico !== undefined ? 'unico' : 'mediano';
+    cart[itemId] = { size: defaultSize, qty: 0, topping };
+  } else {
+    cart[itemId].topping = topping;
+  }
   renderCartUI();
 }
 
 function changeQty(itemId, delta){
   if(!cart[itemId]){
     const defaultSize = itemsIndex[itemId].unico !== undefined ? 'unico' : 'mediano';
-    cart[itemId] = { size: defaultSize, qty: 0 };
+    cart[itemId] = { size: defaultSize, qty: 0, topping: '' };
   }
   cart[itemId].qty = Math.max(0, cart[itemId].qty + delta);
   if(cart[itemId].qty === 0) delete cart[itemId];
@@ -777,11 +1060,11 @@ function changeQty(itemId, delta){
 }
 
 function cartTotal(){
-  return Object.entries(cart).reduce((sum, [itemId, { size, qty }]) => sum + unitPrice(itemId, size) * qty, 0);
+  return Object.entries(cart).reduce((sum, [itemId, { size, qty, topping }]) => sum + unitPrice(itemId, size, topping) * qty, 0);
 }
 
 function renderCartUI(){
-  // sync each item card (qty number + active size button)
+  // sync each item card (qty number, active size button, topping select)
   Object.keys(itemsIndex).forEach(itemId => {
     const qtyEl = document.getElementById('qty-' + itemId);
     if(qtyEl) qtyEl.textContent = cart[itemId] ? cart[itemId].qty : 0;
@@ -790,6 +1073,8 @@ function renderCartUI(){
       const size = cart[itemId] ? cart[itemId].size : (itemsIndex[itemId].unico !== undefined ? 'unico' : 'mediano');
       wrap.querySelectorAll('.size-btn').forEach(b => b.classList.toggle('active', b.dataset.size === size));
     }
+    const toppingSelect = document.getElementById('topping-' + itemId);
+    if(toppingSelect) toppingSelect.value = cart[itemId] ? (cart[itemId].topping || '') : '';
   });
 
   // badge
@@ -804,13 +1089,15 @@ function renderCartUI(){
   if(entries.length === 0){
     list.innerHTML = '<p class="cart-empty">Aún no has agregado nada.</p>';
   } else {
-    list.innerHTML = entries.map(([itemId, { size, qty }]) => {
+    list.innerHTML = entries.map(([itemId, { size, qty, topping }]) => {
       const it = itemsIndex[itemId];
       const label = sizeLabel(itemId, size);
+      const tLabel = toppingLabel(topping);
+      const extras = [label, tLabel].filter(Boolean).join(' · ');
       return `<div class="cart-line">
         <div class="cart-line-info">
-          <span class="cart-line-name">${it.name}${label ? ' · ' + label : ''}</span>
-          <span class="cart-line-price">${money(unitPrice(itemId, size))} c/u</span>
+          <span class="cart-line-name">${it.name}${extras ? ' · ' + extras : ''}</span>
+          <span class="cart-line-price">${money(unitPrice(itemId, size, topping))} c/u</span>
         </div>
         <div class="cart-line-actions">
           <button type="button" onclick="changeQty('${itemId}',-1)" aria-label="Quitar">−</button>
@@ -832,17 +1119,195 @@ document.getElementById('cartDrawer').addEventListener('click', (e) => {
   if(e.target.id === 'cartDrawer') toggleCart();
 });
 
-function sendOrder(){
+/* ---------- Checkout ---------- */
+function copyAccountNumber(){
+  const text = document.getElementById('bankAccountNumber').textContent.trim();
+  const btn = document.getElementById('copyAccountBtn');
+  const label = document.getElementById('copyAccountLabel');
+
+  const showCopied = () => {
+    label.textContent = 'Copiado ✓';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      label.textContent = 'Copiar';
+      btn.classList.remove('copied');
+    }, 1500);
+  };
+
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(showCopied).catch(() => fallbackCopy(text, showCopied));
+  } else {
+    fallbackCopy(text, showCopied);
+  }
+}
+
+function fallbackCopy(text, onDone){
+  const temp = document.createElement('textarea');
+  temp.value = text;
+  temp.style.position = 'fixed';
+  temp.style.opacity = '0';
+  document.body.appendChild(temp);
+  temp.select();
+  try { document.execCommand('copy'); onDone(); } catch(e) {}
+  document.body.removeChild(temp);
+}
+
+function nextValidDate(){
+  // mínimo un día de anticipación, y nunca domingo
+  let d = new Date();
+  d.setDate(d.getDate() + 1);
+  if(d.getDay() === 0) d.setDate(d.getDate() + 1);
+  return d.toISOString().split('T')[0];
+}
+
+function openCheckout(){
+  if(Object.keys(cart).length === 0) return;
+  document.getElementById('cartDrawer').classList.remove('open');
+  renderCheckoutSummary();
+  onDeliveryChange();
+  const dateInput = document.getElementById('ckDate');
+  if(!dateInput.value) dateInput.value = nextValidDate();
+  document.getElementById('checkoutOverlay').classList.add('open');
+}
+
+function closeCheckout(){
+  document.getElementById('checkoutOverlay').classList.remove('open');
+}
+document.getElementById('checkoutOverlay').addEventListener('click', (e) => {
+  if(e.target.id === 'checkoutOverlay') closeCheckout();
+});
+
+function renderCheckoutSummary(){
   const entries = Object.entries(cart);
-  if(entries.length === 0) return;
-  const lines = entries.map(([itemId, { size, qty }]) => {
+  const summary = document.getElementById('checkoutSummary');
+  summary.innerHTML = entries.map(([itemId, { size, qty, topping }]) => {
     const it = itemsIndex[itemId];
     const label = sizeLabel(itemId, size);
-    const subtotal = unitPrice(itemId, size) * qty;
-    return `- ${qty}x ${it.name}${label ? ' (' + label + ')' : ''} — ${money(subtotal)}`;
+    const tLabel = toppingLabel(topping);
+    const extras = [label, tLabel].filter(Boolean).join(' · ');
+    return `<div class="cart-line">
+      <span class="cart-line-name">${qty}x ${it.name}${extras ? ' · ' + extras : ''}</span>
+      <span class="cart-line-price">${money(unitPrice(itemId, size, topping) * qty)}</span>
+    </div>`;
+  }).join('');
+}
+
+function onDeliveryChange(){
+  const delivery = document.querySelector('input[name="ckDelivery"]:checked').value;
+  document.getElementById('optDelivery').classList.toggle('active', delivery === 'delivery');
+  document.getElementById('optPickup').classList.toggle('active', delivery === 'pickup');
+  document.getElementById('deliveryNote').style.display = delivery === 'delivery' ? 'block' : 'none';
+  document.getElementById('pickupNote').style.display = delivery === 'pickup' ? 'block' : 'none';
+  document.getElementById('addressGroup').style.display = delivery === 'delivery' ? 'block' : 'none';
+  if(delivery === 'pickup') document.getElementById('ckAddressError').style.display = 'none';
+  updateCheckoutTotal();
+}
+
+function updateCheckoutTotal(){
+  const checked = document.querySelector('input[name="ckDelivery"]:checked');
+  const fee = checked && checked.value === 'delivery' ? 130 : 0;
+  document.getElementById('checkoutTotal').textContent = money(cartTotal() + fee);
+}
+
+function isValidHNPhone(v){
+  return /^[0-9]{8}$/.test(v.replace(/[\s-]/g, ''));
+}
+
+async function shareReceiptIfPossible(file){
+  if(!file) return false;
+  if(navigator.share && navigator.canShare && navigator.canShare({ files: [file] })){
+    try{
+      await navigator.share({
+        files: [file],
+        title: 'Comprobante de pago - Kremó',
+        text: 'Comprobante de pago de mi pedido en Kremó'
+      });
+      return true;
+    } catch(err){
+      // el usuario cerró el menú de compartir o no eligió nada — no es un error real
+      return false;
+    }
+  }
+  return false;
+}
+
+async function submitCheckout(){
+  const name = document.getElementById('ckName').value.trim();
+  const phoneRaw = document.getElementById('ckPhone').value.trim();
+  const delivery = document.querySelector('input[name="ckDelivery"]:checked').value;
+  const address = document.getElementById('ckAddress').value.trim();
+  const date = document.getElementById('ckDate').value;
+  const time = document.getElementById('ckTime').value;
+
+  let valid = true;
+
+  if(!name) valid = false;
+
+  const phoneError = document.getElementById('ckPhoneError');
+  const phoneOk = isValidHNPhone(phoneRaw);
+  phoneError.style.display = phoneOk ? 'none' : 'block';
+  if(!phoneOk) valid = false;
+
+  const addressError = document.getElementById('ckAddressError');
+  const addressOk = delivery !== 'delivery' || address.length > 0;
+  addressError.style.display = addressOk ? 'none' : 'block';
+  if(!addressOk) valid = false;
+
+  const dateError = document.getElementById('ckDateError');
+  const selectedDate = date ? new Date(date + 'T00:00:00') : null;
+  const isSunday = selectedDate && selectedDate.getDay() === 0;
+  const dateOk = date && !isSunday;
+  dateError.style.display = dateOk ? 'none' : 'block';
+  if(!dateOk) valid = false;
+
+  if(!time) valid = false;
+
+  if(!valid){
+    alert('Por favor completá todos los campos requeridos correctamente.');
+    return;
+  }
+
+  const entries = Object.entries(cart);
+  const lines = entries.map(([itemId, { size, qty, topping }]) => {
+    const it = itemsIndex[itemId];
+    const label = sizeLabel(itemId, size);
+    const tLabel = toppingLabel(topping);
+    const extras = [label, tLabel].filter(Boolean).join(', ');
+    const subtotal = unitPrice(itemId, size, topping) * qty;
+    return `- ${qty}x ${it.name}${extras ? ' (' + extras + ')' : ''} — ${money(subtotal)}`;
   });
-  const msg = `Hola Kremó, quiero hacer este pedido:\n\n${lines.join('\n')}\n\nTotal aproximado: ${money(cartTotal())}`;
+
+  const fee = delivery === 'delivery' ? 130 : 0;
+  const total = cartTotal() + fee;
+  const deliveryText = delivery === 'delivery' ? 'Delivery (+L 130)' : 'Pickup';
+  const addressLine = delivery === 'delivery' ? `Dirección: ${address}\n` : '';
+
+  const msg = `Hola Kremó, quiero confirmar este pedido:\n\n`
+    + `${lines.join('\n')}\n\n`
+    + `Entrega: ${deliveryText}\n`
+    + `${addressLine}`
+    + `Fecha: ${date}\n`
+    + `Horario: ${time}\n`
+    + `Nombre de quien recibe: ${name}\n`
+    + `Celular: +504 ${phoneRaw}\n\n`
+    + `Total: ${money(total)}\n\n`
+    + `Adjunto el comprobante de pago en este chat.`;
+
   window.open(`https://wa.me/50492664235?text=${encodeURIComponent(msg)}`, '_blank');
+
+  const receiptInput = document.getElementById('ckReceipt');
+  const receiptFile = receiptInput.files && receiptInput.files[0];
+
+  if(receiptFile){
+    const shared = await shareReceiptIfPossible(receiptFile);
+    if(!shared){
+      alert('Ahora adjuntá la captura del comprobante de pago directamente en el chat de WhatsApp que se acaba de abrir (tu navegador no permite compartirla automáticamente).');
+    }
+  } else {
+    alert('¡Listo! No olvides enviar la captura del comprobante de pago en el chat de WhatsApp.');
+  }
+
+  closeCheckout();
 }
 </script>
 
