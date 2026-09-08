@@ -2,9 +2,8 @@ name: Cleanup Kremó Receipts
 
 on:
   schedule:
-    # Se ejecuta automáticamente todos los días a la medianoche (UTC)
-    - cron: '0 0 * * *'
-  # Permite ejecutar el proceso manualmente desde la pestaña Actions en GitHub
+    # Se ejecuta a las 12:00 AM hora local (6:00 AM UTC) cada 16 días
+    - cron: '0 6 */16 * *'
   workflow_dispatch:
 
 jobs:
@@ -13,12 +12,12 @@ jobs:
 
     steps:
       - name: Checkout del código
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Configurar Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Instalar dependencias
