@@ -1,0 +1,32 @@
+name: Cleanup Kremó Receipts
+
+on:
+  schedule:
+    # Se ejecuta automáticamente todos los días a la medianoche (UTC)
+    - cron: '0 0 * * *'
+  # Permite ejecutar el proceso manualmente desde la pestaña Actions en GitHub
+  workflow_dispatch:
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Ejecutar script de limpieza
+        env:
+          CLOUDINARY_CLOUD_NAME: ${{ secrets.CLOUDINARY_CLOUD_NAME }}
+          CLOUDINARY_API_KEY: ${{ secrets.CLOUDINARY_API_KEY }}
+          CLOUDINARY_API_SECRET: ${{ secrets.CLOUDINARY_API_SECRET }}
+        run: node scripts/cleanup.js
