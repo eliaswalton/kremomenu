@@ -3,7 +3,7 @@ name: Cleanup Kremó Receipts
 on:
   schedule:
     # Se ejecuta a las 12:00 AM hora local (6:00 AM UTC) cada 16 días
-    - cron: '0 6 */16 * *'
+    - cron: '0 6 * * *'
   workflow_dispatch:
 
 jobs:

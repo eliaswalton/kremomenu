@@ -7,7 +7,7 @@ cloudinary.config({
 });
 
 // Cambia a 30 una vez terminada la prueba
-const DAYS_TO_KEEP = 0; 
+const DAYS_TO_KEEP = 15; 
 
 async function cleanup() {
   console.log('Iniciando búsqueda de comprobantes...');
