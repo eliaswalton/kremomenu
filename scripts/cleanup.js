@@ -19,7 +19,7 @@ const FOLDER = 'kremo-comprobantes';
 
 // Cuántos días se guarda un comprobante antes de borrarse.
 // Cambiá este número si querés más o menos tiempo de retención.
-const DAYS_TO_KEEP = 30;
+const DAYS_TO_KEEP = 0;
 
 async function cleanup() {
   const cutoff = new Date();
