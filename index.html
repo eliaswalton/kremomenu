@@ -775,7 +775,7 @@
       <div class="form-group">
         <label for="ckReceipt">Comprobante de pago</label>
         <input type="file" id="ckReceipt" accept="image/*">
-        <div class="file-hint">En celulares compatibles, al confirmar se abrirá el menú para compartir esta imagen — elegí WhatsApp y el chat de Kremó para adjuntarla. Si tu navegador no lo soporta, te lo recordamos para que la adjuntes manualmente en el chat.</div>
+        <div class="file-hint">En navegadores compatibles, al confirmar copiamos la imagen a tu portapapeles: en el chat de WhatsApp que se abre, mantené presionado el campo de texto y elegí "Pegar" (o Ctrl+V en computadora) para adjuntarla. Si tu navegador no lo soporta, te lo recordamos para que la adjuntes manualmente.</div>
       </div>
 
       <div class="checkout-total"><span>Total con envío</span><span id="checkoutTotal">L 0</span></div>
@@ -1213,22 +1213,16 @@ function isValidHNPhone(v){
   return /^[0-9]{8}$/.test(v.replace(/[\s-]/g, ''));
 }
 
-async function shareReceiptIfPossible(file){
+async function copyReceiptToClipboard(file){
   if(!file) return false;
-  if(navigator.share && navigator.canShare && navigator.canShare({ files: [file] })){
-    try{
-      await navigator.share({
-        files: [file],
-        title: 'Comprobante de pago - Kremó',
-        text: 'Comprobante de pago de mi pedido en Kremó'
-      });
-      return true;
-    } catch(err){
-      // el usuario cerró el menú de compartir o no eligió nada — no es un error real
-      return false;
-    }
+  if(!navigator.clipboard || typeof ClipboardItem === 'undefined') return false;
+  try{
+    const item = new ClipboardItem({ [file.type]: file });
+    await navigator.clipboard.write([item]);
+    return true;
+  } catch(err){
+    return false;
   }
-  return false;
 }
 
 async function submitCheckout(){
@@ -1299,9 +1293,11 @@ async function submitCheckout(){
   const receiptFile = receiptInput.files && receiptInput.files[0];
 
   if(receiptFile){
-    const shared = await shareReceiptIfPossible(receiptFile);
-    if(!shared){
-      alert('Ahora adjuntá la captura del comprobante de pago directamente en el chat de WhatsApp que se acaba de abrir (tu navegador no permite compartirla automáticamente).');
+    const copied = await copyReceiptToClipboard(receiptFile);
+    if(copied){
+      alert('¡Listo! Copiamos la imagen del comprobante a tu portapapeles. En el chat de WhatsApp que se abrió, mantené presionado el campo de texto y elegí "Pegar" (o Ctrl+V en computadora) para adjuntarla.');
+    } else {
+      alert('Ahora adjuntá la captura del comprobante de pago directamente en el chat de WhatsApp que se acaba de abrir (tu navegador no permite copiarla automáticamente).');
     }
   } else {
     alert('¡Listo! No olvides enviar la captura del comprobante de pago en el chat de WhatsApp.');
