@@ -734,16 +734,17 @@
         <div class="delivery-note" id="pickupNote" style="display:none;">Podés recoger tu pedido en <strong>Col. Palmira, Edificio Palmira, frente al Hotel Honduras Maya, entre 10:00 am - 5:00 pm</strong>.</div>
       </div>
 
-      <div class="form-group" id="addressGroup">
+      <div class="form-group" id="addressGroup" style="display:none;">
         <label for="ckAddress">Dirección de entrega *</label>
-        <input type="text" id="ckAddress" placeholder="Colonia, calle, casa/apto, puntos de referencia">
-        <div class="field-error" id="ckAddressError">Ingresá la dirección donde vamos a entregar el pedido.</div>
+        <input type="text" id="ckAddress" placeholder="Calle, número, referencias (ej: Barrio, cerca de...)" maxlength="255">
+        <div class="field-error" id="ckAddressError">Por favor indicá la dirección de entrega.</div>
       </div>
 
-      <div class="form-group">
+      <div class="form-group" id="dateTimeGroup">
         <label for="ckDate">Fecha de entrega *</label>
         <input type="date" id="ckDate">
-        <div class="field-error" id="ckDateError">Elegí una fecha desde mañana, de lunes a sábado (no domingo).</div>
+        <div class="file-hint" id="ckDateHint"></div>
+        <div class="field-error" id="ckDateError">Elegí una fecha válida (respetando la anticipación mínima), de lunes a sábado (no domingo).</div>
       </div>
 
       <div class="form-group">
@@ -1187,12 +1188,34 @@ function fallbackCopy(text, onDone){
   document.body.removeChild(temp);
 }
 
+// Hora (24h) a partir de la cual un pedido ya no alcanza a prepararse
+// para el día siguiente, y pasa a requerir un día extra de anticipación.
+const ORDER_CUTOFF_HOUR = 18; // 6:00 pm
+
+// Arma "AAAA-MM-DD" usando la fecha LOCAL del navegador. No usar
+// toISOString() acá: esa convierte a UTC y en Honduras (UTC-6) eso
+// corre la fecha un día para adelante justo después de las 6:00 pm.
+function toDateInputValue(d){
+  const year = d.getFullYear();
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 function nextValidDate(){
-  // mínimo un día de anticipación, y nunca domingo
-  let d = new Date();
-  d.setDate(d.getDate() + 1);
-  if(d.getDay() === 0) d.setDate(d.getDate() + 1);
-  return d.toISOString().split('T')[0];
+  const now = new Date();
+  const daysToAdd = now.getHours() >= ORDER_CUTOFF_HOUR ? 2 : 1;
+  let d = new Date(now);
+  d.setDate(d.getDate() + daysToAdd);
+  while(d.getDay() === 0){ // nunca domingo
+    d.setDate(d.getDate() + 1);
+  }
+  return toDateInputValue(d);
+}
+
+function formatDateReadable(dateStr){
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('es-HN', { weekday: 'long', day: 'numeric', month: 'long' });
 }
 
 function openCheckout(){
@@ -1201,7 +1224,10 @@ function openCheckout(){
   renderCheckoutSummary();
   onDeliveryChange();
   const dateInput = document.getElementById('ckDate');
-  if(!dateInput.value) dateInput.value = nextValidDate();
+  const minDate = nextValidDate();
+  dateInput.min = minDate;
+  if(!dateInput.value || dateInput.value < minDate) dateInput.value = minDate;
+  document.getElementById('ckDateHint').textContent = `Fecha más próxima disponible: ${formatDateReadable(minDate)}. Los pedidos después de las 6:00 pm requieren un día extra de preparación.`;
   document.getElementById('checkoutOverlay').classList.add('open');
 }
 
@@ -1234,7 +1260,7 @@ function onDeliveryChange(){
   document.getElementById('deliveryNote').style.display = delivery === 'delivery' ? 'block' : 'none';
   document.getElementById('pickupNote').style.display = delivery === 'pickup' ? 'block' : 'none';
   document.getElementById('addressGroup').style.display = delivery === 'delivery' ? 'block' : 'none';
-  if(delivery === 'pickup') document.getElementById('ckAddressError').style.display = 'none';
+  document.getElementById('ckAddressError').style.display = 'none';
   updateCheckoutTotal();
 }
 
@@ -1285,7 +1311,9 @@ async function submitCheckout(){
   const dateError = document.getElementById('ckDateError');
   const selectedDate = date ? new Date(date + 'T00:00:00') : null;
   const isSunday = selectedDate && selectedDate.getDay() === 0;
-  const dateOk = date && !isSunday;
+  const minDate = nextValidDate();
+  const isBeforeMin = date && date < minDate;
+  const dateOk = date && !isSunday && !isBeforeMin;
   dateError.style.display = dateOk ? 'none' : 'block';
   if(!dateOk) valid = false;
 
