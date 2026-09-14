@@ -745,6 +745,7 @@
         <input type="date" id="ckDate">
         <div class="file-hint" id="ckDateHint"></div>
         <div class="field-error" id="ckDateError">Elegí una fecha válida (respetando la anticipación mínima), de lunes a sábado (no domingo).</div>
+        <div class="field-error" id="ckDateRestrictedError" style="display:none;"></div>
       </div>
 
       <div class="form-group">
@@ -854,7 +855,7 @@ const data = [
     name: "Signature by Kremó",
     desc: "Nuestra creación insignia.",
     items: [
-      { name: "Monkey Bread", desc: "Masa madre al estilo cinnamon roll en bolitas cubiertas de canela caramelizada con praliné de pecanas y glaseado de queso crema.", portion: "Mediano rinde 5-4 personas · Familiar rinde 10-12 porciones", familiar: 1200, mediano: 490, dias: "Solo jueves y viernes", photo: "monkey_bread" },
+      { name: "Monkey Bread", desc: "Masa madre al estilo cinnamon roll en bolitas cubiertas de canela caramelizada con praliné de pecanas y glaseado de queso crema.", portion: "Mediano rinde 5-4 personas · Familiar rinde 10-12 personas", familiar: 1200, mediano: 490, dias: "Solo jueves y viernes", diasEntrega: [4, 5], photo: "monkey_bread" },
     ]
   },
   {
@@ -1316,6 +1317,23 @@ async function submitCheckout(){
   const dateOk = date && !isSunday && !isBeforeMin;
   dateError.style.display = dateOk ? 'none' : 'block';
   if(!dateOk) valid = false;
+
+  // Productos con días de entrega fijos (ej. Monkey Bread: solo jueves y viernes)
+  const restrictedError = document.getElementById('ckDateRestrictedError');
+  let restrictedOk = true;
+  if(selectedDate){
+    const dow = selectedDate.getDay();
+    const violating = Object.keys(cart)
+      .map(id => itemsIndex[id])
+      .filter(it => it && Array.isArray(it.diasEntrega) && !it.diasEntrega.includes(dow));
+    if(violating.length){
+      restrictedOk = false;
+      const detalles = [...new Set(violating.map(it => `${it.name} (${it.dias || 'días de entrega limitados'})`))].join(', ');
+      restrictedError.textContent = `${detalles}. Elegí una fecha válida para ese producto.`;
+    }
+  }
+  restrictedError.style.display = restrictedOk ? 'none' : 'block';
+  if(!restrictedOk) valid = false;
 
   if(!time) valid = false;
 
