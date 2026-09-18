@@ -4,6 +4,21 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kremó — Menú</title>
+
+<!-- Preview al compartir el link -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Kremó">
+<meta property="og:title" content="Kremó — ¿Qué hay de postre?">
+<meta property="og:description" content="Dark kitchen de postres en San Pedro Sula. Mirá el menú y pedí por delivery o pickup.">
+<meta property="og:image" content="https://eliaswalton.github.io/kremomenu/og-preview.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://eliaswalton.github.io/kremomenu/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kremó — ¿Qué hay de postre?">
+<meta name="twitter:description" content="Dark kitchen de postres en San Pedro Sula. Mirá el menú y pedí por delivery o pickup.">
+<meta name="twitter:image" content="https://eliaswalton.github.io/kremomenu/og-preview.jpg">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400;0,6..96,500;0,6..96,600;1,6..96,500&family=Work+Sans:wght@300;400;500;600&family=Oswald:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -819,6 +834,11 @@ const photos = {
   tiramisu: "img/tiramisu.jpg",
   brioche_molde: "img/brioche_molde.jpeg",
   pumpkinpie: "img/pumpkinpie.jpg",
+  PumpkinSpiceCake: "img/PumpkinSpiceCake.jpg",
+  treslechesblueberry: "img/treslechesblueberry.jpg",
+  treslechesfresa: "img/treslechesfresa.jpg",
+  cuatroleches: "img/cuatroleches.jpg",
+
 };
 
 const data = [
@@ -828,7 +848,8 @@ const data = [
     desc: "Postres que solo están disponibles por temporadas especiales.",
     items: [
       { name: "Pumpkin Swirl Cheesecake", desc: "Con calabaza especiada en remolino, dulce y aromático, con un final cálido y acogedor.", familiar: 1350, mediano: 680, temporada: true, photo: "pumpkin" },
-      { name: "Pumpink Pie", desc: "Sweet, spicy and a little bit cozy.", familiar: 1270, mediano: 670, temporada: true, photo: "pumpkinpie" },      
+      { name: "Pumpkin Spice Cake (Tres Leches)", desc: "Bizcocho de pumpkin extra húmedo, especiado y reconfortante, con pumpkin butter y un suave glaze de cream cheese. Dulce, cremoso y perfecto para comer a cucharadas.", familiar: 1910, mediano: 1010, temporada: true, photo: "PumpkinSpiceCake" },
+      { name: "Pumpink Pie", desc: "Sweet, spicy and a little bit cozy.", familiar: 1400, mediano: 735, temporada: true, photo: "pumpkinpie" },      
       { name: "Apple Pie Cheesecake", desc: "Con manzanas caramelizadas integradas en la torta, crema y una delicada capa de caramelo salado.", familiar: 1270, mediano: 670, temporada: true, photo: "apple_pie" },
       { name: "Pecan Pie", desc: "Crust crujiente y dorado, relleno acaramelado con el sabor profundo de pecanas tostadas en cada bocado.", familiar: 1450, mediano: 760, temporada: true, photo: "pecan" },
       { name: "Cheesecake de Mango", familiar: 1450, mediano: 750, agotado: true/*, photo: "cheesecake_mango" */},
@@ -864,11 +885,11 @@ const data = [
     desc: "Postres servidos en capas, cremosos y llenos de sabor — pensados para disfrutarse cucharada a cucharada.",
     portionNote: "Mediano rinde 9–12 porciones · Grande rinde 18–20 porciones",
     items: [
-      { name: "Tres leches de arándanos", familiar: 1220, mediano: 660 },
-      { name: "Tres leches de fresa", familiar: 1150, mediano: 650 },
+      { name: "Tres leches de arándanos", familiar: 1220, mediano: 660, photo: "treslechesblueberry" },
+      { name: "Tres leches de fresa", familiar: 1150, mediano: 650, photo: "treslechesfresa" },
       { name: "Tres leches clásico", familiar: 1100, mediano: 600 },
       { name: "Pastel de Zanahoria Tres Leches", desc: "Bizcocho de zanahoria especiado, bañado en mezcla tres leches y cubierto con crema suave estilo cream cheese.", familiar: 1850, mediano: 950, photo: "zanahoria_tresleches" },
-      { name: "Cuatro leches", familiar: 1400, mediano: 800 },
+      { name: "Cuatro leches", familiar: 1400, mediano: 800, photo: "cuatroleches" },
         ]
   },
   {
