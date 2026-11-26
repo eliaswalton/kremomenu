@@ -542,6 +542,7 @@
     transition: all 0.2s ease;
   }
   .radio-option.active{ border-color: var(--gold); color: var(--cream); background: rgba(219,188,106,0.08); }
+  .radio-option.disabled{ opacity: 0.4; cursor: not-allowed; }
   .radio-option input{ display: none; }
   .delivery-note{
     margin-top: 0.6rem;
@@ -805,7 +806,8 @@
           </label>
         </div>
         <div class="delivery-note" id="deliveryNote">El delivery tiene un costo adicional de <strong>L 130</strong>.</div>
-        <div class="delivery-note" id="pickupNote" style="display:none;">Podés recoger tu pedido en <strong>Col. Palmira, Edificio Palmira, frente al Hotel Honduras Maya, entre 10:00 am - 5:00 pm</strong>.</div>
+        <div class="delivery-note" id="pickupNote" style="display:none;">Podés recoger tu pedido en <strong>Col. Palmira, Edificio Palmira, frente al Hotel Honduras Maya, entre 10:00 am - 5:00 pm</strong>. Los sábados solo se entrega por delivery.</div>
+        <div class="delivery-note" id="saturdayNote" style="display:none;">Los <strong>sábados</strong> únicamente se entrega por envío (delivery), por lo que el pickup no está disponible para esa fecha.</div>
       </div>
 
       <div class="form-group" id="addressGroup" style="display:none;">
@@ -820,6 +822,7 @@
         <div class="file-hint" id="ckDateHint"></div>
         <div class="field-error" id="ckDateError">Elegí una fecha válida (respetando la anticipación mínima), de lunes a sábado (no domingo).</div>
         <div class="field-error" id="ckDateRestrictedError" style="display:none;"></div>
+        <div class="field-error" id="ckSaturdayError" style="display:none;">Los sábados solo se entrega por delivery. Elegí Delivery o cambiá la fecha.</div>
       </div>
 
       <div class="form-group">
@@ -923,6 +926,7 @@ const photos = {
   treslechesfresa: "img/treslechesfresa.jpg",
   cuatroleches: "img/cuatroleches.jpg",
   londoncake: "img/londoncake.png",
+  pumpkinspicemonkeybread: "img/PumpkinSpiceMonkeyBread.png",
 
 };
 
@@ -937,6 +941,7 @@ const data = [
       { name: "Pumpink Pie", desc: "Sweet, spicy and a little bit cozy.", familiar: 1400, mediano: 735, temporada: true, photo: "pumpkinpie", portion: "Mediano rinde 6–8 porciones · Familiar rinde 12–16 porciones" },      
       { name: "Apple Pie Cheesecake", desc: "Con manzanas caramelizadas integradas en la torta, crema y una delicada capa de caramelo salado.", familiar: 1270, mediano: 670, temporada: true, photo: "apple_pie", portion: "Mediano rinde 6–8 porciones · Familiar rinde 12–16 porciones" },
       { name: "Pecan Pie", desc: "Crust crujiente y dorado, relleno acaramelado con el sabor profundo de pecanas tostadas en cada bocado.", familiar: 1450, mediano: 760, temporada: true, photo: "pecan", portion: "Mediano rinde 6–8 porciones · Familiar rinde 12–16 porciones" },
+      { name: "Pumpkin Spice Monkey Bread", desc: "Masa madre al estilo cinnamon roll en bolitas cubiertas de canela caramelizada con praliné de pecanas y glaseado de queso crema, con el toque cálido y especiado de la calabaza.", familiar: 1300, mediano: 540, temporada: true, dias: "Solo jueves, viernes, sábado y domingo", diasEntrega: [4, 5, 6, 7], photo: "pumpkinspicemonkeybread", portion: "Mediano rinde 4-5 personas · Familiar rinde 10-12 personas" },
       { name: "Cheesecake de Mango", familiar: 1450, mediano: 750, agotado: true/*, photo: "cheesecake_mango" */},
       { name: "Tres leches de mango", familiar: 1100, mediano: 700, agotado: true },
     ]
@@ -1299,11 +1304,11 @@ function fallbackCopy(text, onDone){
 
 // Hora (24h) a partir de la cual un pedido ya no alcanza a prepararse
 // para el día siguiente, y pasa a requerir un día extra de anticipación.
-const ORDER_CUTOFF_HOUR = 18; // 6:00 pm
+const ORDER_CUTOFF_HOUR = 15; // 3:00 pm
 
 // Arma "AAAA-MM-DD" usando la fecha LOCAL del navegador. No usar
 // toISOString() acá: esa convierte a UTC y en Honduras (UTC-6) eso
-// corre la fecha un día para adelante justo después de las 6:00 pm.
+// corre la fecha un día para adelante justo después de las 3:00 pm.
 function toDateInputValue(d){
   const year = d.getFullYear();
   const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -1312,7 +1317,7 @@ function toDateInputValue(d){
 }
 
 // Categorías cuyos productos requieren un día extra de anticipación
-// (además del corte de las 6:00 pm que ya aplica para todo el catálogo).
+// (además del corte de las 3:00 pm que ya aplica para todo el catálogo).
 // Ej.: "panaderia" (Panadería | Brioche) necesita 2 días de antelación
 // en vez de 1, es decir, si hoy es martes, se puede pedir para el jueves.
 const EXTRA_ADVANCE_CATEGORIES = ['panaderia'];
@@ -1336,6 +1341,26 @@ function nextValidDate(extraDay){
   return toDateInputValue(d);
 }
 
+function isSaturdayDate(dateStr){
+  if(!dateStr) return false;
+  return new Date(dateStr + 'T00:00:00').getDay() === 6;
+}
+
+// Los sábados únicamente se entrega por envío: se deshabilita Pickup y,
+// si estaba elegido, se cambia automáticamente a Delivery.
+function applySaturdayRule(){
+  const isSat = isSaturdayDate(document.getElementById('ckDate').value);
+  const pickupRadio = document.querySelector('input[name="ckDelivery"][value="pickup"]');
+  const deliveryRadio = document.querySelector('input[name="ckDelivery"][value="delivery"]');
+  pickupRadio.disabled = isSat;
+  document.getElementById('optPickup').classList.toggle('disabled', isSat);
+  document.getElementById('saturdayNote').style.display = isSat ? 'block' : 'none';
+  if(isSat && pickupRadio.checked){
+    deliveryRadio.checked = true;
+    onDeliveryChange();
+  }
+}
+
 function formatDateReadable(dateStr){
   const d = new Date(dateStr + 'T00:00:00');
   return d.toLocaleDateString('es-HN', { weekday: 'long', day: 'numeric', month: 'long' });
@@ -1351,14 +1376,17 @@ function openCheckout(){
   const minDate = nextValidDate(needsExtra);
   dateInput.min = minDate;
   if(!dateInput.value || dateInput.value < minDate) dateInput.value = minDate;
+  applySaturdayRule();
   const extraHint = needsExtra ? ' Tu pedido incluye productos de Panadería | Brioche, que requieren 2 días de antelación.' : '';
-  document.getElementById('ckDateHint').textContent = `Fecha más próxima disponible: ${formatDateReadable(minDate)}. Los pedidos después de las 6:00 pm requieren un día extra de preparación.${extraHint}`;
+  document.getElementById('ckDateHint').textContent = `Fecha más próxima disponible: ${formatDateReadable(minDate)}. Los pedidos después de las 3:00 pm requieren un día extra de preparación. Los sábados solo se entrega por delivery.${extraHint}`;
   document.getElementById('checkoutOverlay').classList.add('open');
 }
 
 function closeCheckout(){
   document.getElementById('checkoutOverlay').classList.remove('open');
 }
+document.getElementById('ckDate').addEventListener('change', applySaturdayRule);
+document.getElementById('ckDate').addEventListener('input', applySaturdayRule);
 document.getElementById('checkoutOverlay').addEventListener('click', (e) => {
   if(e.target.id === 'checkoutOverlay') closeCheckout();
 });
@@ -1462,6 +1490,12 @@ async function submitCheckout(){
   }
   restrictedError.style.display = restrictedOk ? 'none' : 'block';
   if(!restrictedOk) valid = false;
+
+  // Sábados: solo delivery (no pickup)
+  const saturdayError = document.getElementById('ckSaturdayError');
+  const saturdayOk = !(isSaturdayDate(date) && delivery === 'pickup');
+  saturdayError.style.display = saturdayOk ? 'none' : 'block';
+  if(!saturdayOk) valid = false;
 
   if(!time) valid = false;
 
